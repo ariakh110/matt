@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "./BaseMap.css";
+
 const data1 = [
   {
     location: "lable-1",
@@ -29,51 +30,50 @@ const data2 = [
     coordinates: [51.416347, 35.791591],
   },
 ];
+
 const BaseMap = () => {
+  const [mapZoom, setMapZoom] = useState(data2);
+
   mapboxgl.accessToken =
     "pk.eyJ1IjoiYXJpYWtoYXllciIsImEiOiJja3k5dWVjM2IwOXVqMnZwOTZ4cmhncG9oIn0.v31YAZMz60ZwK36QDQskoA";
-  const [zoom, setzoom] = useState(9);
-  const [maplg, setMaplg] = useState(data2);
-
+  function handleOrangeZoom(data) {
+    console.log("sadadad", data);
+    setMapZoom(data);
+  }
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: "mapContainer",
       style: "mapbox://styles/mapbox/streets-v11",
       center: [51.389, 35.6892],
-      zoom: zoom,
+      zoom: 8,
     });
-    const addmarkertomap = (data) => {
-      maplg.forEach((location) => {
-        console.log(location.location);
-        const el = document.createElement("div");
-        el.className = "marker";
-        new mapboxgl.Marker(el)
-          .setLngLat(location.coordinates)
-          .setPopup(
-            new mapboxgl.Popup({ offset: 30 }).setHTML(
-              `<h3>${location.location}</h3>`
-            )
-          )
-          .addTo(map);
-      });
-      setMaplg(data);
-    };
-    const removemarkerfrommap = (data) => {
-      maplg.forEach((location) => {
-        const el = document.getElementsByClassName("marker");
-        el[0].remove();
-      });
-    };
-    map.on("zoom", (e) => {
+    let lastZoom = map.getZoom();
+
+    map.on("zoom", () => {
       const currentZoom = map.getZoom();
-      if (currentZoom > 11) {
-        addmarkertomap(data1);
-      } else if (currentZoom < 11) {
-        /**todo: how remove?? */
-        
+      if (currentZoom > lastZoom) {
+        // zoom in
+        handleOrangeZoom(data1);
+      } else {
+        handleOrangeZoom(data2);
       }
+      lastZoom = currentZoom;
     });
-  }, []);
+
+    mapZoom.forEach((location) => {
+      const el = document.createElement("div");
+      el.className = "marker";
+      new mapboxgl.Marker(el)
+        .setLngLat(location.coordinates)
+
+        .setPopup(
+          new mapboxgl.Popup({ offset: 30 }).setHTML(
+            `<h3>${location.location}</h3>`
+          )
+        )
+        .addTo(map);
+    });
+  }, [mapZoom]);
 
   return <div id="mapContainer" className="map"></div>;
 };
