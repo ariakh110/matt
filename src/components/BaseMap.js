@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "./BaseMap.css";
-import { Spinner } from "./Spinner";
 
 const BaseMap = () => {
   mapboxgl.accessToken =
     "pk.eyJ1IjoiYXJpYWtoYXllciIsImEiOiJja3k5dWVjM2IwOXVqMnZwOTZ4cmhncG9oIn0.v31YAZMz60ZwK36QDQskoA";
+  const [zoom, setzoom] = useState(9);
   const data = [
     {
       location: "lable-1",
@@ -36,17 +36,29 @@ const BaseMap = () => {
       zoom: 9,
     });
 
-    data.forEach((location) => {
-      const el = document.createElement("div");
-      el.className = "marker";
-      new mapboxgl.Marker(el)
-        .setLngLat(location.coordinates)
-        .setPopup(
-          new mapboxgl.Popup({ offset: 30 }).setHTML(
-            `<h3>${location.location}</h3>`
-          )
-        )
-        .addTo(map);
+    map.on("wheel", (e) => {
+      console.log("event type:", e.type);
+      const currentZoom = map.getZoom();
+
+      data.forEach((location) => {
+        if (currentZoom > zoom) {
+          const el = document.createElement("div");
+          el.className = "marker";
+          new mapboxgl.Marker(el)
+            .setLngLat(location.coordinates)
+            .setPopup(
+              new mapboxgl.Popup({ offset: 30 }).setHTML(
+                `<h3>${location.location}</h3>`
+              )
+            )
+            .addTo(map);
+        } else {
+            /**todo: how remove?? */
+          const el = document.querySelectorAll("marker");
+          console.log(el);
+          el.remove();
+        }
+      });
     });
   }, []);
 
