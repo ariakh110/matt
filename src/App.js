@@ -1,9 +1,9 @@
-import BaseMap from "./components/BaseMap";
+import { MapCluster } from "./components/MapCluster";
 
 function App() {
   return (
     <div className="App">
-      <BaseMap />
+      <MapCluster />
     </div>
   );
 }

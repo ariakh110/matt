@@ -26,3 +26,12 @@ body {
   text-align: center;
   font-family: "Open Sans", sans-serif;
 }
+.cluster-marker {
+  color: #fff;
+  background: #1978c8;
+  border-radius: 5rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
