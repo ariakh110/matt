@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 
-import ReactMapGL, { Marker, FlyToInterpolator } from "react-map-gl";
+import ReactMapGL, { Marker, FlyToInterpolator, Popup } from "react-map-gl";
 import useSupercluster from "use-supercluster";
 import "./BaseMap.css";
 
@@ -40,6 +40,7 @@ export const MapCluster = () => {
     height: "100vh",
     zoom: 9,
   });
+  const [showPopup, setShowPopup] = useState(false);
 
   const mapRef = useRef();
 
@@ -96,9 +97,9 @@ export const MapCluster = () => {
                     longitude,
                     zoom: expansionZoom,
                     transitionInterpolator: new FlyToInterpolator({
-                      speed: 2
+                      speed: 2,
                     }),
-                    transitionDuration: "auto"
+                    transitionDuration: "auto",
                   });
                 }}
               >
@@ -113,12 +114,31 @@ export const MapCluster = () => {
             latitude={latitude}
             longitude={longitude}
           >
-            <button>
-              <i class="fas fa-map-marker-alt "></i>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setShowPopup(cluster);
+                console.log(showPopup);
+              }}
+            >
+              <i className="fas fa-map-marker-alt"></i>
             </button>
           </Marker>
         );
       })}
+      {showPopup && (
+        <Popup
+          latitude={showPopup.geometry.coordinates[1]}
+          longitude={showPopup.geometry.coordinates[0]}
+          closeButton={true}
+          closeOnClick={false}
+          onClose={() => setShowPopup(false)}
+          anchor="top"
+          offsetTop={20}
+        >
+          <div>{showPopup.properties.lable}</div>
+        </Popup>
+      )}
     </ReactMapGL>
   );
 };
