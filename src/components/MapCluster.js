@@ -136,7 +136,9 @@ export const MapCluster = () => {
           anchor="top"
           offsetTop={20}
         >
-          <div>{showPopup.properties.lable}</div>
+          <div>
+            <h3>{showPopup.properties.lable}</h3>
+          </div>
         </Popup>
       )}
     </ReactMapGL>
