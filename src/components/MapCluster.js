@@ -57,7 +57,7 @@ export const MapCluster = () => {
     ? mapRef.current.getMap().getBounds().toArray().flat()
     : null;
 
-  const { clusters } = useSupercluster({
+  const { clusters, supercluster } = useSupercluster({
     points,
     zoom: viewport.zoom,
     bounds,
@@ -83,7 +83,27 @@ export const MapCluster = () => {
         if (isCluster) {
           return (
             <Marker key={cluster.id} latitude={latitude} longitude={longitude}>
-              <div className="cluster-marker">{pointCount}</div>
+              <div
+                className="cluster-marker"
+                onClick={() => {
+                  const expansionZoom = Math.min(
+                    supercluster.getClusterExpansionZoom(cluster.id),
+                    20
+                  );
+                  setViewport({
+                    ...viewport,
+                    latitude,
+                    longitude,
+                    zoom: expansionZoom,
+                    transitionInterpolator: new FlyToInterpolator({
+                      speed: 2
+                    }),
+                    transitionDuration: "auto"
+                  });
+                }}
+              >
+                {pointCount}
+              </div>
             </Marker>
           );
         }
